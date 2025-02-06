@@ -3,10 +3,14 @@ FROM ${BASE} AS base
 
 WORKDIR /app
 
-# Install dependencies (this step is cached as long as the dependencies don't change)
+# Install pnpm globally (bypassing Corepack issues)
+RUN npm install -g pnpm@8.6.0
+
+# Copy package files for dependency installation
 COPY package.json pnpm-lock.yaml ./
 
-RUN corepack enable pnpm && pnpm install
+# Install dependencies with pnpm
+RUN pnpm install
 
 # Copy the rest of your app's source code
 COPY . .
@@ -61,7 +65,7 @@ FROM base AS bolt-ai-development
 
 # Define the same environment variables for development
 ARG GROQ_API_KEY
-ARG HuggingFace 
+ARG HuggingFace
 ARG OPENAI_API_KEY
 ARG ANTHROPIC_API_KEY
 ARG OPEN_ROUTER_API_KEY
